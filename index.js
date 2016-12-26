@@ -8,7 +8,7 @@
 
 // should be overridden from config
 var default_broker_address = 'mqtt://localhost'
-var default_mqtt_channel = "/relay/2"
+var default_mqtt_channel = "/relay/4"
 
 var mqtt = require('mqtt')
 var mqttClient = null;
@@ -16,7 +16,7 @@ var mqttClient = null;
 module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
-  homebridge.registerAccessory("homebridge-2rshield", "2RelayShield", TwoRelayShield);
+  homebridge.registerAccessory("homebridge-4rshield", "4RelayShield", TwoRelayShield);
 }
 
 function TwoRelayShield(log, config) {
@@ -26,7 +26,10 @@ function TwoRelayShield(log, config) {
   this.mqttBroker = config['mqtt_broker'];
   this.mqttChannel = config['mqtt_channel'];
 
-    this.state = 0; // consider enabled by default, set -1 on failure.
+    this.stateA = 0; // consider enabled by default, set -1 on failure.
+    this.stateB = 0; // consider enabled by default, set -1 on failure.
+    this.stateC = 0; // consider enabled by default, set -1 on failure.
+    this.stateD = 0; // consider enabled by default, set -1 on failure.
 
     if (!this.mqttBroker) {
       this.log.warn('Config is missing mqtt_broker, fallback to default.');        
@@ -42,6 +45,10 @@ function TwoRelayShield(log, config) {
     }
 
     init_mqtt(this.mqttBroker, this.mqttChannel);
+    init_mqtt(this.mqttBroker, "/relay/A/state");
+    init_mqtt(this.mqttBroker, "/relay/B/state");
+    init_mqtt(this.mqttBroker, "/relay/C/state");
+    init_mqtt(this.mqttBroker, "/relay/D/state");
   }
 
   function init_mqtt(broker_address, channel) {
@@ -53,7 +60,7 @@ function TwoRelayShield(log, config) {
     mqttClient.on('connect', function () {
       var subscription = channel + '/state'
       console.log("MQTT connected, subscribing to monitor: " + subscription )
-      mqttClient.subscribe(subscription)      
+      mqttClient.subscribe(subscription)
     })
 
     mqttClient.on('error', function () {
@@ -70,17 +77,41 @@ function TwoRelayShield(log, config) {
       console.log("topic: " + topic.toString())
       console.log("message: " + message.toString())
 
-      if (topic == channel + "/state") {
+      if (topic == "/relay/4/A/state") {
         if (message == "ON") {
-          this.state = 1;
-          this.brightness = 1;
+          this.stateA = 1;
         } else {
-          this.state = 0;
-          this.brightness = 0;
+          this.stateA = 0;
         }
-
         console.log("[processing] message " + message)
-      }     
+      }
+
+      if (topic == "/relay/4/B/state") {
+        if (message == "ON") {
+          this.stateB = 1;
+        } else {
+          this.stateB = 0;
+        }
+        console.log("[processing] message " + message)
+      }
+
+      if (topic == "/relay/4/C/state") {
+        if (message == "ON") {
+          this.stateC = 1;
+        } else {
+          this.stateC = 0;
+        }
+        console.log("[processing] message " + message)
+      }
+
+      if (topic == "/relay/4/D/state") {
+        if (message == "ON") {
+          this.stateD = 1;
+        } else {
+          this.stateD = 0;
+        }
+        console.log("[processing] message " + message)
+      }
     })
   }
 
@@ -116,7 +147,7 @@ function TwoRelayShield(log, config) {
 
     informationService
     .setCharacteristic(Characteristic.Manufacturer, "Page 42")
-    .setCharacteristic(Characteristic.Model, "2-Relay Shield")
+    .setCharacteristic(Characteristic.Model, "4-Relay Shield")
     .setCharacteristic(Characteristic.SerialNumber, "1");
 
     lightbulbService

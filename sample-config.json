@@ -7,29 +7,29 @@
   },
   "accessories" : [
     {
-      "accessory" : "2RelayShield",
-      "name" : "2-Relay A",
+      "accessory" : "4RelayShield",
+      "name" : "4-Relay A",
       "description" : "Relay Shield A",
       "mqtt_broker" : "192.168.1.21",
       "mqtt_channel " : "/relay/4/A"
     },
     {
-      "accessory" : "2RelayShield",
-      "name" : "2-Relay B",
+      "accessory" : "4RelayShield",
+      "name" : "4-Relay B",
       "description" : "Relay Shield B",
       "mqtt_broker" : "192.168.1.21",
       "mqtt_channel " : "/relay/4/B"
     },
     {
-      "accessory" : "2RelayShield",
-      "name" : "2-Relay C",
+      "accessory" : "4RelayShield",
+      "name" : "4-Relay C",
       "description" : "Relay Shield C",
       "mqtt_broker" : "192.168.1.21",
       "mqtt_channel " : "/relay/4/C"
     },
     {
-      "accessory" : "2RelayShield",
-      "name" : "2-Relay B",
+      "accessory" : "4RelayShield",
+      "name" : "4-Relay B",
       "description" : "Relay Shield D",
       "mqtt_broker" : "192.168.1.21",
       "mqtt_channel " : "/relay/4/D"

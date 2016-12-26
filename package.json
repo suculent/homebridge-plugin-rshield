@@ -1,7 +1,7 @@
 {
-  "name" : "homebridge-2rshield",
+  "name" : "homebridge-4rshield",
   "version" : "0.0.2",
-  "description" : "ESP8266 2-Relay Sheld Control plugin for MQTT/Homebridge",
+  "description" : "ESP8266 4-Relay Sheld Control plugin for MQTT/Homebridge",
   "main" : "index.js",
   "author" : "Matej Sychra",
   "license" : "ISC",
