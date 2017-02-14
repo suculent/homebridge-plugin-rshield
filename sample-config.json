@@ -11,28 +11,28 @@
       "name" : "4-Relay A",
       "description" : "Relay Shield A",
       "mqtt_broker" : "mqtt://192.168.1.21",
-      "mqtt_channel " : "/relay/4/A"
+      "mqtt_channel" : "/relay/4/A"
     },
     {
       "accessory" : "4RelayShield",
       "name" : "4-Relay B",
       "description" : "Relay Shield B",
       "mqtt_broker" : "mqtt://192.168.1.21",
-      "mqtt_channel " : "/relay/4/B"
+      "mqtt_channel" : "/relay/4/B"
     },
     {
       "accessory" : "4RelayShield",
       "name" : "4-Relay C",
       "description" : "Relay Shield C",
       "mqtt_broker" : "mqtt://192.168.1.21",
-      "mqtt_channel " : "/relay/4/C"
+      "mqtt_channel" : "/relay/4/C"
     },
     {
       "accessory" : "4RelayShield",
       "name" : "4-Relay B",
       "description" : "Relay Shield D",
       "mqtt_broker" : "mqtt://192.168.1.21",
-      "mqtt_channel " : "/relay/4/D"
+      "mqtt_channel" : "/relay/4/D"
     }
   ]
 }
