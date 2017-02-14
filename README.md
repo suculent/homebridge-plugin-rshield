@@ -1,6 +1,6 @@
 # homebridge-plugin-2rshield
 
-This is simple [homebridge](https://github.com/nfarina/homebridge) plugin for ESP8266 Lolin with 24V-6V power breadboard and twin Relay Shield (4 switched 220V outputs).
+This is simple [homebridge](https://github.com/nfarina/homebridge) plugin for ESP8266 with 24V-6V power breadboard and twin Relay Shield (2 switched 220V outputs).
 
 ## Prerequisites
 
