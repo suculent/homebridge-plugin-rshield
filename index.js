@@ -1,13 +1,15 @@
 /*
- * This HAP device connects to defined or default mqtt broker/channel and responds to brightness.
+ * This HAP device bridges BLE to defined or default mqtt broker/channel.
  */
 
- var request = require('request');
+'use strict';
 
- var Service, Characteristic;
+var request = require('request');
+
+var Service, Characteristic;
 
 // should be overridden from config
-var default_broker_address = 'mqtt://localhost'
+var default_broker_address = 'mqtt://192.168.1.21'
 var default_mqtt_channel = "/relay/4"
 
 var mqtt = require('mqtt')
@@ -16,20 +18,26 @@ var mqttClient = null;
 module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
-  homebridge.registerAccessory("homebridge-4rshield", "4RelayShield", TwoRelayShield);
+  homebridge.registerAccessory("homebridge-4rshield", "4RelayShield", FourRelayShield);
 }
 
-function TwoRelayShield(log, config) {
-  this.log = log;
+class FourRelayShield {
 
-  this.name = config['name'] || "Relay Switch";
-  this.mqttBroker = config['mqtt_broker'];
-  this.mqttChannel = config['mqtt_channel'];
+  constructor(log, config)
+  {
+    this.log = log;
+
+    var that = this;
+
+    this.name = config['name'] || "4-Relay Switch";
+    this.mqttBroker = config['mqtt_broker'];
+    this.mqttChannel = config['mqtt_channel'];
 
     this.stateA = 0; // consider enabled by default, set -1 on failure.
     this.stateB = 0; // consider enabled by default, set -1 on failure.
     this.stateC = 0; // consider enabled by default, set -1 on failure.
     this.stateD = 0; // consider enabled by default, set -1 on failure.
+    this.status = 0;
 
     if (!this.mqttBroker) {
       this.log.warn('Config is missing mqtt_broker, fallback to default.');        
@@ -44,33 +52,23 @@ function TwoRelayShield(log, config) {
       this.mqttChannel = default_mqtt_channel;        
     }
 
-    init_mqtt(this.mqttBroker, this.mqttChannel);
-    init_mqtt(this.mqttBroker, "/relay/A/state");
-    init_mqtt(this.mqttBroker, "/relay/B/state");
-    init_mqtt(this.mqttBroker, "/relay/C/state");
-    init_mqtt(this.mqttBroker, "/relay/D/state");
-  }
-
-  function init_mqtt(broker_address, channel) {
-    console.log("Connecting to mqtt broker: " + broker_address)
-    mqttClient = mqtt.connect(broker_address)
-
-    var that = this
+    this.log("Connecting to mqtt broker: " + this.mqttBroker)
+    mqttClient = mqtt.connect(this.mqttBroker)
 
     mqttClient.on('connect', function () {
-      var subscription = channel + '/state'
+      var subscription = that.mqttChannel + '/state'
       console.log("MQTT connected, subscribing to monitor: " + subscription )
       mqttClient.subscribe(subscription)
     })
 
     mqttClient.on('error', function () {
       console.log("MQTT error")
-      this.brightness = -1
+      this.status = -1
     })
 
     mqttClient.on('offline', function () {
       console.log("MQTT offline")
-      this.brightness = -1
+      this.status = -1
     })
 
     mqttClient.on('message', function (topic, message) {
@@ -115,45 +113,122 @@ function TwoRelayShield(log, config) {
     })
   }
 
-  TwoRelayShield.prototype.setPowerState = function(powerOn, callback, context) {
+  setPowerStateA(powerOn, callback, context) {
     console.log('setPowerState: %s', String(powerOn));
     if(context !== 'fromSetValue') {        
       if (mqttClient) { 
-        this.log('publishing ON/OFF to: %s', this.mqttChannel); 
+        this.log('publishing ON/OFF to 4R-A'); 
         if (powerOn) {                
-          mqttClient.publish(this.mqttChannel, "ON");
+          mqttClient.publish("/relay/4/A", "ON");
         } else {
-          mqttClient.publish(this.mqttChannel, "OFF");
+          mqttClient.publish("/relay/4/A", "OFF");
         }              
         callback(null);
       }    
     }
   }
 
-  TwoRelayShield.prototype.getPowerState = function(callback) {
-    console.log('getPowerState callback(null, '+this.brightness+')');
-    var status = 0
-    if (this.brightness > 0) {
-      callback(null, 1);
-    } else {
-      callback(null, 0);
+  getPowerStateA(callback) {
+    console.log('getPowerState callback(null, '+this.stateB+')');
+    callback(null, this.stateA);    
+  }
+
+  setPowerStateB(powerOn, callback, context) {
+    console.log('setPowerState: %s', String(powerOn));
+    if(context !== 'fromSetValue') {        
+      if (mqttClient) { 
+        this.log('publishing ON/OFF to 4R-B'); 
+        if (powerOn) {                
+          mqttClient.publish("/relay/4/B", "ON");
+        } else {
+          mqttClient.publish("/relay/4/B", "OFF");
+        }              
+        callback(null);
+      }    
     }
   }
 
-  TwoRelayShield.prototype.getServices = function() {
+  getPowerStateB(callback) {
+    console.log('getPowerState callback(null, '+this.stateB+')');
+    callback(null, this.stateB);    
+  }
 
-    var lightbulbService = new Service.Lightbulb(this.name);
+  setPowerStateC(powerOn, callback, context) {
+    console.log('setPowerState: %s', String(powerOn));
+    if(context !== 'fromSetValue') {        
+      if (mqttClient) { 
+        this.log('publishing ON/OFF to 4R-C'); 
+        if (powerOn) {                
+          mqttClient.publish("/relay/4/C", "ON");
+        } else {
+          mqttClient.publish("/relay/4/C", "OFF");
+        }              
+        callback(null);
+      }    
+    }
+  }
+
+  getPowerStateC(callback) {
+    console.log('getPowerState callback(null, '+this.stateC+')');
+    callback(null, this.stateC);    
+  }
+
+  setPowerStateD(powerOn, callback, context) {
+    console.log('setPowerState: %s', String(powerOn));
+    if(context !== 'fromSetValue') {        
+      if (mqttClient) { 
+        this.log('publishing ON/OFF to 4R-D'); 
+        if (powerOn) {                
+          mqttClient.publish("/relay/4/D", "ON");
+        } else {
+          mqttClient.publish("/relay/4/D", "OFF");
+        }              
+        callback(null);
+      }    
+    }
+  }
+
+  getPowerStateD(callback) {
+    console.log('getPowerState callback(null, '+this.stateD+')');
+    callback(null, this.stateD);    
+  }
+
+  getServices() {
+
+    var lightbulbService = new Service.Lightbulb(this.name, "master");
+    var lightbulbServiceB = new Service.Lightbulb(this.name+"B", "B");
+
     var informationService = new Service.AccessoryInformation();
 
     informationService
     .setCharacteristic(Characteristic.Manufacturer, "Page 42")
     .setCharacteristic(Characteristic.Model, "4-Relay Shield")
-    .setCharacteristic(Characteristic.SerialNumber, "1");
+    .setCharacteristic(Characteristic.SerialNumber, "1");    
 
     lightbulbService
     .getCharacteristic(Characteristic.On)
-    .on('get', this.getPowerState.bind(this))
-    .on('set', this.setPowerState.bind(this));
+    .on('get', this.getPowerStateA.bind(this))
+    .on('set', this.setPowerStateA.bind(this));
+
+  /*
+    lightbulbServiceB
+    .getCharacteristic(Characteristic.On)
+    .on('get', this.getPowerStateB.bind(this))
+    .on('set', this.setPowerStateB.bind(this));
+
+    lightbulbServiceC
+    .getCharacteristic(Characteristic.On)
+    .on('get', this.getPowerStateC.bind(this))
+    .on('set', this.setPowerStateC.bind(this));
+    lightbulbServiceC.subtype = "C";
+
+    lightbulbServiceD
+    .getCharacteristic(Characteristic.On)
+    .on('get', this.getPowerStateD.bind(this))
+    .on('set', this.setPowerStateD.bind(this));
+    lightbulbServiceD.subtype = "D";
+    */
 
     return [lightbulbService, informationService];
   }
+}
