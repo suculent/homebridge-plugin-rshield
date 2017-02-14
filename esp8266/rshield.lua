@@ -13,6 +13,7 @@ deviceID=node.chipid()
  
 wifi.setmode(wifi.STATION)
 wifi.sta.config (wifi_ssid, wifi_password)
+wifi.sta.connect();
  
 -- Pin connections
 mqttLed = 4 -- On-board LED
