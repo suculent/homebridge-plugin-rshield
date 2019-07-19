@@ -1,5 +1,7 @@
 # homebridge-plugin-2rshield
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/suculent/homebridge-plugin-rshield.svg)](https://greenkeeper.io/)
+
 This is simple [homebridge](https://github.com/nfarina/homebridge) plugin for ESP8266 with 24V-6V power breadboard and twin Relay Shield (2 switched 220V outputs).
 
 ## Prerequisites
